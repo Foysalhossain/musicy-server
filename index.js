@@ -150,6 +150,34 @@ async function run() {
             res.send(result);
         })
 
+        app.patch('/makeadmin/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const { role, updated } = req.body;
+            const updateDoc = {
+                $set: {
+                    role: role,
+                    updated: updated
+                }
+            }
+            const result = await usersCollection.updateOne(query, updateDoc)
+            res.send(result)
+        })
+
+        app.patch('/makeinstructor/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const { role, updated } = req.body;
+            const updateDoc = {
+                $set: {
+                    role: role,
+                    updated: updated
+                }
+            }
+            const result = await usersCollection.updateOne(query, updateDoc)
+            res.send(result)
+        })
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
