@@ -52,6 +52,7 @@ async function run() {
         const classesCollection = client.db("musicDb").collection("classes");
         const userClassCollection = client.db("musicDb").collection('userClasses');
 
+
         app.get('/instructors', async (req, res) => {
             const filter = { role: "instructor" }
             const result = await usersCollection.find(filter).toArray();
@@ -76,12 +77,19 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/userclasses', verifyJWT, async (req, res) => {
+            const result = await userClassCollection.find().toArray()
+            res.send(result);
+        })
+
         app.get('/userclasses/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
             const query = { email: email, payment: 'false' }
             const result = await userClassCollection.find(query).toArray()
             res.send(result);
         })
+
+
 
         app.post('/create-payment-intent', async (req, res) => {
             const { price } = req.body;
@@ -112,6 +120,33 @@ async function run() {
             const email = req.params.email;
             const query = { email: email, payment: 'true' };
             const result = await userClassCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        app.delete('/deleteclass/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await userClassCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user)
+            res.send(result);
+        })
+
+        app.get('/users', async (req, res) => {
+            const result = await usersCollection.find().toArray();
+            res.send(result);
+        })
+
+
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            const result = { admin: user?.role === 'admin' }
             res.send(result);
         })
 
