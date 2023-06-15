@@ -197,10 +197,20 @@ async function run() {
                 email: email,
                 price: parseInt(price),
                 status: status,
-                students: 0
+                students: 0,
+                newClass: 'true'
             }
             const result = await classesCollection.insertOne(updateDoc)
             res.send(result)
+        })
+
+        app.get('/instructorclasses/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = {
+                email: email
+            }
+            const result = await classesCollection.find(query).toArray();
+            res.send(result);
         })
 
         // Send a ping to confirm a successful connection
