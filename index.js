@@ -150,6 +150,14 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/users/instructor/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            const result = { instructor: user?.role === 'instructor' }
+            res.send(result);
+        })
+
         app.patch('/makeadmin/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
@@ -175,6 +183,23 @@ async function run() {
                 }
             }
             const result = await usersCollection.updateOne(query, updateDoc)
+            res.send(result)
+        })
+
+        app.post('/classes', async (req, res) => {
+            const { image, name, instructor, available_seats, email, price, status } = req.body;
+            const updateDoc = {
+
+                image: image,
+                name: name,
+                instructor: instructor,
+                available_seats: parseInt(available_seats),
+                email: email,
+                price: parseInt(price),
+                status: status,
+                students: 0
+            }
+            const result = await classesCollection.insertOne(updateDoc)
             res.send(result)
         })
 
